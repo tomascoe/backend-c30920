@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+
+# Logs
+logs
+*.log
+
+# =========================
+# Operating System Files
+# =========================
+
+*.zip
+*.rar
+*.sql
+
+# Folders
+node_modules/
