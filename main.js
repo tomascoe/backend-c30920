@@ -1,38 +1,70 @@
-class Usuario {
-    constructor(nombre, apellido, libros, mascotas){
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.libros = [];
-        this.mascotas = [];
+const { error } = require("console");
+const fs = require("fs");
+
+class Container {
+  constructor(path) {
+    this.path = path;
+  }
+
+  async getContentById(id) {
+    try {
+      const content = await this.getAll();
+      const parsedContent = await JSON.parse(content);
+      return parsedContent;
+    } catch (err) {
+      /* handle error */
+      throw new Error(err);
     }
+  }
 
-    getFullName = () => console.log(`Nombre Completo: ${this.nombre} ${this.apellido}`);
+  async save(data) {
+    try {
+      await fs.promises.writeFile(this.path, data);
+      console.log("Escritura exitosa");
+    } catch (err) {
+      /* handle error */
+      console.log(err);
+    }
+  }
 
-    addMascota = (name) => this.mascotas.push(name);
+  async deleteAll() {
+    try {
+      await fs.promises.writeFile(this.path, "[]");
+      console.log("Borrado exitosamente");
+    } catch (err) {
+      /* handle error */
+      throw new Error(err);
+    }
+  }
+  async deteleById(id) {
+    try {
+      const elements = await this.getContentById(id);
+      const element = await elements.filter((e) => e.id !== id);
+    } catch (err) {
+      /* handle error */
+      throw new Error(err);
+    }
+  }
 
-    countMascotas = () => console.log(`Cantidad de mascotas: ${this.mascotas.length}`);
-
-    addBook = (title , author) => this.libros.push({nombre: title, autoth: author});
-
-    getBookNames = () => console.log(this.libros.map(libro => libro.nombre));
+  async getAll() {
+    try {
+      const content = await fs.promises.readFile(this.path, "utf-8");
+      return content;
+    } catch (err) {
+      /* handle error */
+      throw new Error(err);
+    }
+  }
+  async getById(id) {
+    try {
+      const elements = await this.getContentById(id);
+      const element = await elements.filter((e) => e.id === id);
+      return element;
+    } catch (err) {
+      /* handle error */
+      throw new Error(err);
+    }
+  }
 }
 
-let usuario1 = new Usuario('Tomas', 'Coelho', null, null);
-
-//MASCOTAS 
-usuario1.addMascota('Nefertiti')
-usuario1.addMascota('Agnes');
-usuario1.addMascota('Wanda');
-usuario1.addMascota('Frida');
-
-//LIBROS
-usuario1.addBook('ZeroZeroZero', 'Roberto Saviano');
-usuario1.addBook('Se questo e un uomo', 'Primo Levi');
-usuario1.addBook('La teoria del tutto', 'Stephen W. Hawking');
-usuario1.addBook('Despues de Auschwitz', 'Eva Schloss');
-usuario1.addBook('La Gestapo', 'Frank McDonough');
-
-//OUTPUTS
-usuario1.getFullName();
-usuario1.countMascotas();
-usuario1.getBookNames();
+module.exports = Container;
