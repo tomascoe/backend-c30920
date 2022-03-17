@@ -6,6 +6,17 @@ class Container {
     this.path = path;
   }
 
+  async saveAll(data) {
+    try {
+      const content = await fs.promises.writeFile(this.path, data);
+      const newContent = await this.getAll();
+      return newContent;
+    } catch (err) {
+      /* handle error */
+      throw new Error(err);
+    }
+  }
+
   async getAll() {
     try {
       const content = await fs.promises.readFile(this.path, "utf-8");
@@ -17,14 +28,26 @@ class Container {
     }
   }
 
-  async save(data) {
+  async save(art, price, timg) {
     try {
-      const content = await fs.promises.writeFile(this.path, data);
+      const elements = await this.getAll();
+      const ids = await elements.map((user) => user.id);
+      const sortedIds = await ids.sort((a, b) => a - b);
+      let lastId = sortedIds[sortedIds.length - 1];
+      let newId = lastId + 1;
+      let newObj = {
+        title: art,
+        price: price,
+        thumbnail: timg,
+        id: newId,
+      };
+      let newData = [...elements, newObj];
+      const writeNewElements = await this.saveAll(JSON.stringify(newData));
       const newContent = await this.getAll();
       return newContent;
     } catch (err) {
       /* handle error */
-      throw new Error(err);
+      console.log(err);
     }
   }
 
@@ -32,6 +55,8 @@ class Container {
     try {
       await fs.promises.writeFile(this.path, "[]");
       console.log("Borrado exitosamente");
+      const newContent = await this.getAll();
+      return newContent;
     } catch (err) {
       /* handle error */
       throw new Error(err);
@@ -41,7 +66,7 @@ class Container {
     try {
       const contents = await this.getAll();
       const elements = await contents.filter((e) => e.id !== id);
-      const writeNewElements = await this.save(JSON.stringify(elements));
+      const writeNewElements = await this.saveAll(JSON.stringify(elements));
       const newContent = await this.getAll();
       return newContent;
     } catch (err) {
