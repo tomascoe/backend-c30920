@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/tomascoe/backend-c30920/issues"
   },
-  "homepage": "https://github.com/tomascoe/backend-c30920#readme"
+  "homepage": "https://github.com/tomascoe/backend-c30920#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
 }
