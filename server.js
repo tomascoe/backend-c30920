@@ -7,7 +7,7 @@ const cont = new Container("./productos.txt");
 app.get("/", (req, res) => res.send("HOME"));
 
 app.get("/productos", (req, res) => {
-  cont.getAll().then((resp) => res.send(resp));
+  cont.getAll().then((resp) => res.send(resp[0]));
 });
 
 app.get("/productoRandom", (req, res) => {
